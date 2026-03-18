@@ -1,1 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head><title>Char Importer</title></head>
+<body style="font-family: sans-serif; padding: 20px; background: #222; color: white;">
+    <h2>Roleplay Character Importer</h2>
+    <input type="file" id="fileInput" accept=".json,.char,.persona">
+    <div id="output" style="margin-top:20px; padding:10px; border:1px solid #555; background:#333; display:none;">
+        <p><strong>Copy this into your chat:</strong></p>
+        <textarea id="resultText" style="width:100%; height:150px; background:#000; color:#0f0;"></textarea>
+        <button onclick="copyText()" style="margin-top:10px; padding:10px;">Copy to Clipboard</button>
+    </div>
 
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const data = JSON.parse(event.target.result);
+                // Extracting your specific keys
+                const name = data.name || "Unknown";
+                const desc = data.description || data.persona || "";
+                const scene = data.scenario || "a new adventure";
+                
+                // Formatting into your exact "You are..." prompt
+                const finalPrompt = `You are ${name} ${desc} in this scenario ${scene}. I am User and I am a traveler.`;
+                
+                document.getElementById('resultText').value = finalPrompt;
+                document.getElementById('output').style.display = 'block';
+            };
+            reader.readAsText(file);
+        });
+        function copyText() {
+            document.getElementById('resultText').select();
+            document.execCommand('copy');
+            alert('Copied!');
+        }
+    </script>
+</body>
+</html>
