@@ -13,4 +13,5 @@ If it is too restiricted in the sidebar under advanced press aftey instructions 
 
 # Things you may want to know
 Actions are performed with `*action*`
-If you are using a ai that uses markdown formating i recomend to type md so actions look like **this**
+
+  If you are using a ai that uses markdown formating i recomend to type md so actions look like **this**
