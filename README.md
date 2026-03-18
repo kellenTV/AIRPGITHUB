@@ -8,7 +8,8 @@ for a easier expierence
 
 ## Google AI Studio
 If you want a good website to use use google ai studio [here](https://aistudio.google.com/prompts/new_chat)
-If it is too restiricted in the sidebar under advanced press aftey instructions change as needed
+If it is too restiricted in the sidebar under advanced press saftey instructions change as needed
+To paste the system prompt press system prompt make sure you are either on the one you made before or the create new on the bar paste the prompt intop the instructions name it your good
 
 
 # Things you may want to know
