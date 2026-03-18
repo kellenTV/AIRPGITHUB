@@ -12,4 +12,4 @@ If it is too restiricted in the sidebar under advanced press aftey instructions 
 
 
 # Things you may want to know
-Actions are performed with /*action/*
+Actions are performed with `*action*`
