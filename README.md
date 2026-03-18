@@ -2,5 +2,5 @@ The litteral best way to chat without the stupidity of any of the ai chat bots u
 Sytem prompt to enter is in the txt file
 go to the [this link](https://kellentv.github.io/AIRPGITHUB/)
 for a easier expierence
-If you want a good website to use use google ai studio [aistudio.google.com]](https://aistudio.google.com/prompts/new_chat)
+If you want a good website to use use google ai studio [Here](https://aistudio.google.com/prompts/new_chat)
 If it is too restiricted in the sidebar under advanced press aftey instructions change as needed
