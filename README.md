@@ -2,7 +2,7 @@ The litteral best way to chat without the stupidity of any of the ai chat bots u
 
 ## Sytem prompt to enter is in the txt file
 
-## Website to auto make and share starting prompts
+## Website to auto make and download a file to share characters and personas
 go to the [this link](https://kellentv.github.io/AIRPGITHUB/)
 for a easier expierence
 
