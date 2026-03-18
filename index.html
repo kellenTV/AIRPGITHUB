@@ -1,39 +1,143 @@
 <!DOCTYPE html>
 <html>
-<head><title>Char Importer</title></head>
-<body style="font-family: sans-serif; padding: 20px; background: #222; color: white;">
-    <h2>Roleplay Character Importer</h2>
-    <input type="file" id="fileInput" accept=".json,.char,.persona">
-    <div id="output" style="margin-top:20px; padding:10px; border:1px solid #555; background:#333; display:none;">
-        <p><strong>Copy this into your chat:</strong></p>
-        <textarea id="resultText" style="width:100%; height:150px; background:#000; color:#0f0;"></textarea>
-        <button onclick="copyText()" style="margin-top:10px; padding:10px;">Copy to Clipboard</button>
+<head>
+    <title>RP Engine: Char & Persona Manager</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #e0e0e0; padding: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1000px; margin: auto; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 10px; border: 1px solid #333; transition: 0.3s; }
+        .full-width { grid-column: 1 / -1; }
+        h3 { margin-top: 0; color: #4a9eff; border-bottom: 1px solid #333; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        label { display: block; margin: 10px 0 5px; font-size: 0.85em; color: #888; }
+        input, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        textarea { height: 80px; resize: vertical; }
+        .btn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
+        .btn-char { background: #4a9eff; color: white; }
+        .btn-pers { background: #9b59b6; color: white; }
+        .btn-copy { background: #f1c40f; color: black; font-size: 1.1em; }
+        #finalOutput { background: #0a0a0a; color: #00ff00; font-family: monospace; height: 100px; }
+        .file-label { background: #252525; padding: 10px; display: block; text-align: center; border: 1px dashed #555; cursor: pointer; margin-bottom: 10px; }
+        .toggle-container { font-size: 0.7em; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .toggle-container input { width: auto; }
+        .disabled { opacity: 0.4; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<div class="grid">
+    <div class="card">
+        <h3>1. Character / Scenario (.char)</h3>
+        <label class="file-label">Import .char File <input type="file" id="importChar" accept=".char,.json" style="display:none"></label>
+        
+        <label>Character/Group Name:</label>
+        <input type="text" id="charName" placeholder="e.g. Godzilla">
+        
+        <label>Character Description:</label>
+        <textarea id="charDesc" placeholder="Physicality, personality..."></textarea>
+        
+        <label>Scenario (Optional):</label>
+        <textarea id="scenario" placeholder="The setting or event..."></textarea>
+        
+        <button class="btn btn-char" onclick="exportFile('char')">Save as .char</button>
     </div>
 
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
+    <div class="card" id="personaCard">
+        <h3>
+            2. Your Persona (.persona)
+            <div class="toggle-container">
+                <input type="checkbox" id="usePersona" checked> <label for="usePersona" style="margin:0; color:white;">ENABLE</label>
+            </div>
+        </h3>
+        <div id="personaFields">
+            <label class="file-label">Import .persona File <input type="file" id="importPers" accept=".persona,.json" style="display:none"></label>
+            
+            <label>Your Name:</label>
+            <input type="text" id="yourName" value="User">
+            
+            <label>Your Description:</label>
+            <textarea id="yourDesc" placeholder="e.g. a brave traveler"></textarea>
+            
+            <button class="btn btn-pers" onclick="exportFile('persona')">Save as .persona</button>
+        </div>
+    </div>
+
+    <div class="card full-width">
+        <h3>3. Final RP Engine Command</h3>
+        <textarea id="finalOutput" readonly></textarea>
+        <button class="btn btn-copy" onclick="copyResult()">COPY FOR TYPINGMIND</button>
+    </div>
+</div>
+
+<script>
+    // Importer Logic
+    function setupImporter(id, fields) {
+        document.getElementById(id).addEventListener('change', function(e) {
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = (event) => {
                 const data = JSON.parse(event.target.result);
-                // Extracting your specific keys
-                const name = data.name || "Unknown";
-                const desc = data.description || data.persona || "";
-                const scene = data.scenario || "a new adventure";
-                
-                // Formatting into your exact "You are..." prompt
-                const finalPrompt = `You are ${name} ${desc} in this scenario ${scene}. I am User and I am a traveler.`;
-                
-                document.getElementById('resultText').value = finalPrompt;
-                document.getElementById('output').style.display = 'block';
+                fields.forEach(f => {
+                    if (data[f.key]) document.getElementById(f.target).value = data[f.key];
+                });
+                update();
             };
-            reader.readAsText(file);
+            reader.readAsText(e.target.files[0]);
         });
-        function copyText() {
-            document.getElementById('resultText').select();
-            document.execCommand('copy');
-            alert('Copied!');
+    }
+
+    setupImporter('importChar', [{key:'name', target:'charName'}, {key:'description', target:'charDesc'}, {key:'scenario', target:'scenario'}]);
+    setupImporter('importPers', [{key:'name', target:'yourName'}, {key:'description', target:'yourDesc'}]);
+
+    // The Generator Logic
+    function update() {
+        const cName = document.getElementById('charName').value;
+        const cDesc = document.getElementById('charDesc').value;
+        const scene = document.getElementById('scenario').value;
+        const pName = document.getElementById('yourName').value;
+        const pDesc = document.getElementById('yourDesc').value;
+        const useP = document.getElementById('usePersona').checked;
+
+        // Visual feedback for persona card
+        document.getElementById('personaFields').className = useP ? "" : "disabled";
+
+        let str = `You are ${cName || '[Character]'} ${cDesc}. `;
+        if (scene) str += `In this scenario ${scene}. `;
+        
+        // Only add persona if toggle is ON
+        if (useP) {
+            str += `I am ${pName || 'User'} and i am like ${pDesc || 'a traveler'}.`;
         }
-    </script>
+        
+        document.getElementById('finalOutput').value = str;
+    }
+
+    // Exporter Logic
+    function exportFile(type) {
+        let data, filename;
+        if (type === 'char') {
+            data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value };
+            filename = (data.name || "character") + ".char";
+        } else {
+            data = { name: document.getElementById('yourName').value, description: document.getElementById('yourDesc').value };
+            filename = (data.name || "persona") + ".persona";
+        }
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+    }
+
+    function copyResult() {
+        document.getElementById('finalOutput').select();
+        document.execCommand('copy');
+        alert("Copied! Paste this into TypingMind.");
+    }
+
+    // Listen for all inputs and the toggle
+    document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', update));
+    document.getElementById('usePersona').addEventListener('change', update);
+    
+    update();
+</script>
 </body>
 </html>
