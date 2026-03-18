@@ -64,7 +64,7 @@
     <div class="card full-width">
         <h3>3. Final RP Engine Command</h3>
         <textarea id="finalOutput" readonly></textarea>
-        <button class="btn btn-copy" onclick="copyResult()">COPY FOR TYPINGMIND</button>
+        <button class="btn btn-copy" onclick="copyResult()">COPY FOR RP</button>
     </div>
 </div>
 
@@ -130,7 +130,7 @@
     function copyResult() {
         document.getElementById('finalOutput').select();
         document.execCommand('copy');
-        alert("Copied! Paste this into TypingMind.");
+        alert("Copied! Paste this into AI.");
     }
 
     // Listen for all inputs and the toggle
