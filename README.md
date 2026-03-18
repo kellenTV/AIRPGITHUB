@@ -17,4 +17,4 @@ To paste the system prompt press system prompt make sure you are either on the o
 # Things you may want to know
 Actions are performed with `*action*`
 
-  If you are using a ai that uses markdown formating i recomend to type md so actions look like **this**
+  If you are using a ai that uses markdown formating i recomend to type md so actions look like **this** Google ai studio by default shows in md format
