@@ -1,62 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RP Engine: GitHub Explorer</title>
+    <title>RP Engine: Universal GitHub Explorer</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #e0e0e0; padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f0f; color: #e0e0e0; padding: 20px; line-height: 1.4; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: auto; }
-        .card { background: #1e1e1e; padding: 20px; border-radius: 10px; border: 1px solid #333; transition: 0.3s; }
+        .card { background: #1a1a1a; padding: 20px; border-radius: 12px; border: 1px solid #333; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .full-width { grid-column: 1 / -1; }
-        h3 { margin-top: 0; color: #4a9eff; border-bottom: 1px solid #333; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        h3 { margin-top: 0; color: #4a9eff; border-bottom: 1px solid #333; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 1.1em; }
         
         /* Browser Styles */
-        .browser-controls { display: flex; gap: 10px; margin-bottom: 15px; }
-        select { background: #000; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; flex: 1; }
+        .browser-controls { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        select, .search-input { background: #000; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 6px; flex: 1; min-width: 120px; }
+        .search-input { flex: 2; }
+        
         #repoBrowser { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
-            gap: 15px; 
-            max-height: 400px; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 12px; 
+            max-height: 450px; 
             overflow-y: auto; 
             padding: 15px; 
-            background: #0a0a0a; 
-            border: 1px solid #333;
+            background: #050505; 
+            border: 1px solid #222;
             border-radius: 8px;
         }
         .repo-item { 
-            background: #252525; 
-            padding: 10px; 
+            background: #222; 
+            padding: 8px; 
             border-radius: 8px; 
             text-align: center; 
             cursor: pointer; 
             border: 1px solid transparent;
-            transition: 0.2s;
+            transition: all 0.2s ease;
+            position: relative;
         }
-        .repo-item:hover { border-color: #4a9eff; background: #2d2d2d; }
-        .repo-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; margin-bottom: 8px; background: #000; }
-        .repo-item span { font-size: 0.85em; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .repo-item:hover { border-color: #4a9eff; background: #2a2a2a; transform: translateY(-2px); }
+        .repo-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; margin-bottom: 6px; background: #000; }
+        .repo-item span { font-size: 0.75em; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #bbb; }
 
-        /* Form Styles */
-        label { display: block; margin: 10px 0 5px; font-size: 0.85em; color: #888; }
-        input, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
-        textarea { height: 80px; resize: vertical; }
-        .btn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s; }
+        /* Form Elements */
+        label { display: block; margin: 12px 0 4px; font-size: 0.8em; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        textarea { height: 70px; resize: vertical; }
+        input:focus, textarea:focus { border-color: #4a9eff; outline: none; }
+        
+        .btn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
         .btn-char { background: #4a9eff; color: white; }
         .btn-pers { background: #9b59b6; color: white; }
-        .btn-copy { background: #f1c40f; color: black; font-size: 1.1em; }
-        .btn-fetch { background: #2ecc71; color: white; width: auto; margin-top: 0; padding: 0 20px; }
+        .btn-copy { background: #f1c40f; color: black; font-size: 1.1em; margin-top: 15px; }
+        .btn-fetch { background: #2ecc71; color: white; width: auto; margin-top: 0; padding: 0 25px; }
         
-        #finalOutput { background: #0a0a0a; color: #00ff00; font-family: monospace; height: 100px; }
-        .toggle-container { font-size: 0.7em; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .toggle-container input { width: auto; }
-        .disabled { opacity: 0.4; pointer-events: none; }
+        #finalOutput { background: #000; color: #00ff00; font-family: 'Consolas', monospace; height: 100px; border-color: #004400; font-size: 0.9em; }
+        .toggle-container { font-size: 0.7em; color: #fff; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .disabled { opacity: 0.3; pointer-events: none; filter: grayscale(1); }
+        
+        /* Scrollbar */
+        #repoBrowser::-webkit-scrollbar { width: 8px; }
+        #repoBrowser::-webkit-scrollbar-track { background: #050505; }
+        #repoBrowser::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <div class="grid">
     <div class="card full-width">
-        <h3>GitHub Explorer</h3>
+        <h3>GitHub Repository Explorer</h3>
         <div class="browser-controls">
             <select id="repoCategory">
                 <option value="SFW">SFW</option>
@@ -67,115 +76,135 @@
                 <option value="char">Characters</option>
                 <option value="personas">Personas</option>
             </select>
-            <button class="btn btn-fetch" onclick="fetchRepoItems()">Browse Folders</button>
+            <input type="text" id="repoSearch" class="search-input" placeholder="Search loaded folders..." oninput="filterItems()">
+            <button class="btn btn-fetch" onclick="fetchRepoItems()">BROWSE</button>
         </div>
         <div id="repoBrowser">
-            <p style="color:#666; grid-column: 1/-1; text-align: center;">Click "Browse" to view your GitHub folders.</p>
+            <p style="color:#555; grid-column: 1/-1; text-align: center; padding: 40px;">Select category and click Browse to scan your repo.</p>
         </div>
     </div>
 
     <div class="card">
         <h3>Character / Scenario (.char)</h3>
-        <label>Character/Group Name:</label>
-        <input type="text" id="charName" placeholder="e.g. Godzilla">
-        <label>Character Description:</label>
-        <textarea id="charDesc" placeholder="Physicality, personality..."></textarea>
+        <label>Name:</label>
+        <input type="text" id="charName" placeholder="Character or Group Name">
+        <label>Description:</label>
+        <textarea id="charDesc" placeholder="Physical traits, personality, quirks..."></textarea>
         <label>Scenario (Optional):</label>
-        <textarea id="scenario" placeholder="The setting..."></textarea>
-        <button class="btn btn-char" onclick="exportFile('char')">Save .char</button>
+        <textarea id="scenario" placeholder="What is happening? Where are they?"></textarea>
+        <button class="btn btn-char" onclick="exportFile('char')">SAVE AS .CHAR</button>
     </div>
 
     <div class="card" id="personaCard">
         <h3>
             Your Persona (.persona)
-            <div class="toggle-container">
-                <input type="checkbox" id="usePersona" checked> <label for="usePersona" style="margin:0; color:white;">ENABLE</label>
-            </div>
+            <label class="toggle-container">
+                <input type="checkbox" id="usePersona" checked> ENABLE
+            </label>
         </h3>
         <div id="personaFields">
             <label>Your Name:</label>
             <input type="text" id="yourName" value="User">
             <label>Your Description:</label>
-            <textarea id="yourDesc" placeholder="e.g. a brave traveler"></textarea>
-            <button class="btn btn-pers" onclick="exportFile('persona')">Save .persona</button>
+            <textarea id="yourDesc" placeholder="Who are you in this story?"></textarea>
+            <button class="btn btn-pers" onclick="exportFile('persona')">SAVE AS .PERSONA</button>
         </div>
     </div>
 
     <div class="card full-width">
-        <h3>Final RP Command</h3>
+        <h3>Final RP Engine Command</h3>
         <textarea id="finalOutput" readonly></textarea>
-        <button class="btn btn-copy" onclick="copyResult()">COPY FOR RP</button>
+        <button class="btn btn-copy" onclick="copyResult()">COPY FOR RP ENGINE</button>
     </div>
 </div>
 
 <script>
-    // --- SET YOUR DETAILS HERE ---
-    const GITHUB_USER = "kellenTV"; 
-    const GITHUB_REPO = "AIRPGITHUB";
+    // --- GITHUB CONFIGURATION ---
+    const GITHUB_USER = "kellenTV"; // <-- REPLACE THIS
+    const GITHUB_REPO = "AIRPGITHUB";    // <-- REPLACE THIS
     const BRANCH = "main"; 
-    // -----------------------------
 
+    // --- REPOSITORY SCANNER ---
     async function fetchRepoItems() {
         const cat = document.getElementById('repoCategory').value;
         const type = document.getElementById('repoType').value;
         const browser = document.getElementById('repoBrowser');
-        
-        // Matches structure: SFW/char/ (per your screenshot)
         const path = `${cat}/${type}`;
         
-        browser.innerHTML = "Fetching...";
-
+        browser.innerHTML = "";
+        
         try {
             const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`);
-            if (!res.ok) throw new Error("Could not find folder");
+            if (!res.ok) throw new Error("Directory not found in repo.");
             
-            const items = await res.json();
-            browser.innerHTML = "";
+            const folders = await res.json();
 
-            items.forEach(item => {
-                if (item.type === 'dir') {
+            for (const folder of folders) {
+                if (folder.type === 'dir') {
+                    // Create placeholder item
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'repo-item';
-                    
-                    // Image: folder/item/item.png
-                    const imgUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/${path}/${item.name}/${item.name}.png`;
-                    
-                    itemDiv.innerHTML = `
-                        <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/150/111/444?text=No+Img'">
-                        <span>${item.name}</span>
-                    `;
-                    
-                    itemDiv.onclick = () => loadRepoFile(path, item.name, type);
+                    itemDiv.setAttribute('data-name', folder.name.toLowerCase());
+                    itemDiv.innerHTML = `<div style="height:100px; display:flex; align-items:center; justify-content:center; font-size:0.7em; color:#444;">Scanning...</div><span>${folder.name}</span>`;
                     browser.appendChild(itemDiv);
+
+                    // Scan the folder for specific files (Universal naming)
+                    fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${folder.path}`)
+                        .then(r => r.json())
+                        .then(files => {
+                            const imageFile = files.find(f => f.name.match(/\.(png|jpg|jpeg|webp)$/i));
+                            const imgUrl = imageFile ? imageFile.download_url : 'https://via.placeholder.com/150/111/444?text=No+Img';
+                            
+                            itemDiv.innerHTML = `<img src="${imgUrl}"><span>${folder.name}</span>`;
+                            itemDiv.onclick = () => loadFolderData(files, type, folder.name);
+                        });
                 }
-            });
+            }
         } catch (e) {
-            browser.innerHTML = `<p style="color:#ff4a4a; grid-column:1/-1;">Error: ${e.message}</p>`;
+            browser.innerHTML = `<p style="color:#ff4a4a; grid-column:1/-1; text-align:center;">Error: ${e.message}</p>`;
         }
     }
 
-    async function loadRepoFile(path, folderName, type) {
-        const ext = (type === 'personas') ? 'persona' : 'char';
-        const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/${path}/${folderName}/${folderName}.${ext}`;
+    // --- UNIVERSAL DATA LOADER ---
+    async function loadFolderData(files, type, folderName) {
+        // Look for .char, .persona, or any .json file
+        const targetExt = (type === 'personas') ? '.persona' : '.char';
+        const dataFile = files.find(f => f.name.toLowerCase().endsWith(targetExt) || f.name.toLowerCase().endsWith('.json'));
+
+        if (!dataFile) {
+            alert(`No ${targetExt} or .json found in "${folderName}"`);
+            return;
+        }
 
         try {
-            const res = await fetch(url);
-            const data = await res.json();
+            const res = await fetch(dataFile.download_url);
+            const json = await res.json();
 
             if (type === 'personas') {
-                document.getElementById('yourName').value = data.name || folderName;
-                document.getElementById('yourDesc').value = data.description || "";
+                document.getElementById('yourName').value = json.name || folderName;
+                document.getElementById('yourDesc').value = json.description || "";
             } else {
-                document.getElementById('charName').value = data.name || folderName;
-                document.getElementById('charDesc').value = data.description || "";
-                document.getElementById('scenario').value = data.scenario || "";
+                document.getElementById('charName').value = json.name || folderName;
+                document.getElementById('charDesc').value = json.description || json.desc || "";
+                document.getElementById('scenario').value = json.scenario || "";
             }
             update();
         } catch (e) {
-            alert(`Missing file: ${folderName}.${ext}`);
+            alert("Error parsing file. Ensure it is a valid JSON format.");
         }
     }
 
+    // --- LIVE FILTER ---
+    function filterItems() {
+        const query = document.getElementById('repoSearch').value.toLowerCase();
+        const items = document.querySelectorAll('.repo-item');
+        items.forEach(item => {
+            const name = item.getAttribute('data-name');
+            item.style.display = name.includes(query) ? "block" : "none";
+        });
+    }
+
+    // --- CORE LOGIC ---
     function update() {
         const cName = document.getElementById('charName').value;
         const cDesc = document.getElementById('charDesc').value;
@@ -187,8 +216,8 @@
         document.getElementById('personaFields').className = useP ? "" : "disabled";
 
         let str = `You are ${cName || '[Char]'} ${cDesc}. `;
-        if (scene) str += `Scenario: ${scene}. `;
-        if (useP) str += `I am ${pName} described as ${pDesc}.`;
+        if (scene) str += `Scenario Context: ${scene}. `;
+        if (useP) str += `I am playing as ${pName}, who is ${pDesc}.`;
         
         document.getElementById('finalOutput').value = str;
     }
@@ -197,7 +226,7 @@
         let data, filename;
         if (type === 'char') {
             data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value };
-            filename = (data.name || "char") + ".char";
+            filename = (data.name || "character") + ".char";
         } else {
             data = { name: document.getElementById('yourName').value, description: document.getElementById('yourDesc').value };
             filename = (data.name || "persona") + ".persona";
@@ -209,13 +238,16 @@
 
     function copyResult() {
         const out = document.getElementById('finalOutput');
-        out.select(); document.execCommand('copy');
-        alert("Copied!");
+        out.select();
+        document.execCommand('copy');
+        alert("Command copied! Paste it into your AI.");
     }
 
+    // Listeners
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', update));
     document.getElementById('usePersona').addEventListener('change', update);
     update();
 </script>
+
 </body>
 </html>
