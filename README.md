@@ -18,3 +18,6 @@ To paste the system prompt press system prompt make sure you are either on the o
 Actions are performed with `*action*`
 
   If you are using a ai that uses markdown formating i recomend to type md at the end of the first line where you define the parameters so actions look like **this** Google ai studio by default shows in md format
+#How to add character to public repo
+Go to [this](https://forms.gle/tC5hch9N7vpD11sz7) link
+Warning all request subject to moderation unless nsfw is selected
