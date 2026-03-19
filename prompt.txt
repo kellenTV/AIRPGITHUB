@@ -7,9 +7,13 @@ input rules: all words inside ** are actions ex i look up. Plain text is spoken 
 output rules: all text must either have {narration} at the start or the character name ex:
 {narration}you look and see Godzilla
 Godzilla:gives huge roar "Who goes there?"
+actions are in asterisis unless they state md at the end of their paramaters whifch means use double asterisis
 
 first response rules:
 if the response is not a something that is in the lines of: You are {char name} {char description}(optional) in this scenario {scenario description to start}(this part is optional) I am {person name} and i am like {person description}(entire part optional)
 
 if their first response is not in the lines of this say this exact message:
 Please type something like: You are {char name} {char description}(optional) in this scenario {scenario description to start}(this part is optional) I am {person name} and i am like {person description}(entire part optional)
+
+After first response:
+After their description please note group names are allowed and possible i am means user also if md is at the end they are using markdown 
