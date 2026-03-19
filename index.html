@@ -11,10 +11,10 @@
         
         /* Browser Styles */
         .browser-controls { display: flex; gap: 10px; margin-bottom: 15px; }
-        select { background: #000; color: #fff; border: 1px solid #444; padding: 8px; border-radius: 5px; flex: 1; }
+        select { background: #000; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; flex: 1; }
         #repoBrowser { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
             gap: 15px; 
             max-height: 400px; 
             overflow-y: auto; 
@@ -34,14 +34,13 @@
         }
         .repo-item:hover { border-color: #4a9eff; background: #2d2d2d; }
         .repo-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; margin-bottom: 8px; background: #000; }
-        .repo-item span { font-size: 0.8em; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .repo-item span { font-size: 0.85em; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
         /* Form Styles */
         label { display: block; margin: 10px 0 5px; font-size: 0.85em; color: #888; }
         input, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
         textarea { height: 80px; resize: vertical; }
         .btn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; transition: 0.2s; }
-        .btn:hover { opacity: 0.8; }
         .btn-char { background: #4a9eff; color: white; }
         .btn-pers { background: #9b59b6; color: white; }
         .btn-copy { background: #f1c40f; color: black; font-size: 1.1em; }
@@ -57,21 +56,21 @@
 
 <div class="grid">
     <div class="card full-width">
-        <h3>GitHub Repository Explorer</h3>
+        <h3>GitHub Explorer</h3>
         <div class="browser-controls">
             <select id="repoCategory">
-                <option value="sfw">SFW</option>
-                <option value="nsfw">NSFW</option>
-                <option value="underreview">Under Review</option>
+                <option value="SFW">SFW</option>
+                <option value="NSFW">NSFW</option>
+                <option value="UnderReview">Under Review</option>
             </select>
             <select id="repoType">
+                <option value="char">Characters</option>
                 <option value="personas">Personas</option>
-                <option value="characters">Characters</option>
             </select>
             <button class="btn btn-fetch" onclick="fetchRepoItems()">Browse Folders</button>
         </div>
         <div id="repoBrowser">
-            <p style="color:#666; grid-column: 1/-1; text-align: center;">Select category and click "Browse" to load folders.</p>
+            <p style="color:#666; grid-column: 1/-1; text-align: center;">Click "Browse" to view your GitHub folders.</p>
         </div>
     </div>
 
@@ -79,14 +78,11 @@
         <h3>Character / Scenario (.char)</h3>
         <label>Character/Group Name:</label>
         <input type="text" id="charName" placeholder="e.g. Godzilla">
-        
         <label>Character Description:</label>
         <textarea id="charDesc" placeholder="Physicality, personality..."></textarea>
-        
         <label>Scenario (Optional):</label>
-        <textarea id="scenario" placeholder="The setting or event..."></textarea>
-        
-        <button class="btn btn-char" onclick="exportFile('char')">Save as .char</button>
+        <textarea id="scenario" placeholder="The setting..."></textarea>
+        <button class="btn btn-char" onclick="exportFile('char')">Save .char</button>
     </div>
 
     <div class="card" id="personaCard">
@@ -99,53 +95,53 @@
         <div id="personaFields">
             <label>Your Name:</label>
             <input type="text" id="yourName" value="User">
-            
             <label>Your Description:</label>
             <textarea id="yourDesc" placeholder="e.g. a brave traveler"></textarea>
-            
-            <button class="btn btn-pers" onclick="exportFile('persona')">Save as .persona</button>
+            <button class="btn btn-pers" onclick="exportFile('persona')">Save .persona</button>
         </div>
     </div>
 
     <div class="card full-width">
-        <h3>Final RP Engine Command</h3>
+        <h3>Final RP Command</h3>
         <textarea id="finalOutput" readonly></textarea>
         <button class="btn btn-copy" onclick="copyResult()">COPY FOR RP</button>
     </div>
 </div>
 
 <script>
-    // CONFIGURATION: SET YOUR GITHUB DETAILS HERE
+    // --- SET YOUR DETAILS HERE ---
     const GITHUB_USER = "kellenTV"; 
     const GITHUB_REPO = "AIRPGITHUB";
-    const BRANCH = "main"; // or "master"
+    const BRANCH = "main"; 
+    // -----------------------------
 
-    // 1. REPO FETCHING LOGIC
     async function fetchRepoItems() {
-        const category = document.getElementById('repoCategory').value;
+        const cat = document.getElementById('repoCategory').value;
         const type = document.getElementById('repoType').value;
         const browser = document.getElementById('repoBrowser');
-        const path = `${category}/${type}`;
         
-        browser.innerHTML = "Fetching folders...";
+        // Matches structure: SFW/char/ (per your screenshot)
+        const path = `${cat}/${type}`;
+        
+        browser.innerHTML = "Fetching...";
 
         try {
-            const response = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`);
-            const items = await response.json();
-
-            if (!Array.isArray(items)) throw new Error("Invalid Path");
-
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`);
+            if (!res.ok) throw new Error("Could not find folder");
+            
+            const items = await res.json();
             browser.innerHTML = "";
+
             items.forEach(item => {
                 if (item.type === 'dir') {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'repo-item';
                     
-                    // Assumes PNG name matches Folder Name
+                    // Image: folder/item/item.png
                     const imgUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/${path}/${item.name}/${item.name}.png`;
                     
                     itemDiv.innerHTML = `
-                        <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/150/111/444?text=No+Image'">
+                        <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/150/111/444?text=No+Img'">
                         <span>${item.name}</span>
                     `;
                     
@@ -154,11 +150,10 @@
                 }
             });
         } catch (e) {
-            browser.innerHTML = `<p style="color:#ff4a4a; grid-column: 1/-1;">Error: Check path /${path} or Repository settings.</p>`;
+            browser.innerHTML = `<p style="color:#ff4a4a; grid-column:1/-1;">Error: ${e.message}</p>`;
         }
     }
 
-    // 2. FILE LOADING LOGIC
     async function loadRepoFile(path, folderName, type) {
         const ext = (type === 'personas') ? 'persona' : 'char';
         const url = `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/${BRANCH}/${path}/${folderName}/${folderName}.${ext}`;
@@ -170,7 +165,6 @@
             if (type === 'personas') {
                 document.getElementById('yourName').value = data.name || folderName;
                 document.getElementById('yourDesc').value = data.description || "";
-                document.getElementById('usePersona').checked = true;
             } else {
                 document.getElementById('charName').value = data.name || folderName;
                 document.getElementById('charDesc').value = data.description || "";
@@ -178,11 +172,10 @@
             }
             update();
         } catch (e) {
-            alert("Could not find or parse the ." + ext + " file in this folder.");
+            alert(`Missing file: ${folderName}.${ext}`);
         }
     }
 
-    // 3. ENGINE CORE LOGIC
     function update() {
         const cName = document.getElementById('charName').value;
         const cDesc = document.getElementById('charDesc').value;
@@ -193,46 +186,36 @@
 
         document.getElementById('personaFields').className = useP ? "" : "disabled";
 
-        let str = `You are ${cName || '[Character]'} ${cDesc}. `;
-        if (scene) str += `In this scenario ${scene}. `;
-        
-        if (useP) {
-            str += `I am ${pName || 'User'} and i am like ${pDesc || 'a traveler'}.`;
-        }
+        let str = `You are ${cName || '[Char]'} ${cDesc}. `;
+        if (scene) str += `Scenario: ${scene}. `;
+        if (useP) str += `I am ${pName} described as ${pDesc}.`;
         
         document.getElementById('finalOutput').value = str;
     }
 
-    // 4. EXPORT & UTILS
     function exportFile(type) {
         let data, filename;
         if (type === 'char') {
             data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value };
-            filename = (data.name || "character") + ".char";
+            filename = (data.name || "char") + ".char";
         } else {
             data = { name: document.getElementById('yourName').value, description: document.getElementById('yourDesc').value };
             filename = (data.name || "persona") + ".persona";
         }
         const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = filename;
-        a.click();
+        a.href = URL.createObjectURL(blob); a.download = filename; a.click();
     }
 
     function copyResult() {
-        const output = document.getElementById('finalOutput');
-        output.select();
-        document.execCommand('copy');
-        alert("Prompt copied to clipboard!");
+        const out = document.getElementById('finalOutput');
+        out.select(); document.execCommand('copy');
+        alert("Copied!");
     }
 
-    // Event Listeners
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', update));
     document.getElementById('usePersona').addEventListener('change', update);
-    
     update();
 </script>
-
 </body>
 </html>
