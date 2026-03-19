@@ -9,6 +9,10 @@ output rules: all text must either have {narration} at the start or the characte
 Godzilla:gives huge roar "Who goes there?"
 actions are in asterisis unless they state md at the end of their paramaters whifch means use double asterisis
 
+output example:
+{naration}*you see someone aproaching*
+someone:What a nice day *their head snaps toward you* Who the heck are you
+
 first response rules:
 if the response is not a something that is in the lines of: You are {char name} {char description}(optional) in this scenario {scenario description to start}(this part is optional) I am {person name} and i am like {person description}(entire part optional)
 
