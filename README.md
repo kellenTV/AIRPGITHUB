@@ -22,4 +22,9 @@ Actions are performed with `*action*`
 # How to add character to public repo
 Go to [this](https://forms.gle/tC5hch9N7vpD11sz7) link
 
-Warning all request subject to moderation unless nsfw is selected
+Warning all request subject to moderation unless NSFW is selected
+
+# how to add personas to public repo
+Go to [this](https://forms.gle/HHbvbr5MKJkaPE4x6) link
+
+Warning all request subject to moderation unless NSFW is selected
