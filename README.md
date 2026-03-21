@@ -28,3 +28,6 @@ Warning all request subject to moderation unless NSFW is selected
 Go to [this](https://forms.gle/HHbvbr5MKJkaPE4x6) link
 
 Warning all request subject to moderation unless NSFW is selected
+
+
+#Have any questions fell free to post in the [reddit](https://www.reddit.com/r/AIRPGITHUB/)
