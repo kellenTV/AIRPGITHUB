@@ -1,256 +1,244 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RP Engine: Char & Persona Manager</title>
+    <title>RP Engine</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: #e0e0e0; padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1000px; margin: auto; }
-        .card { background: #1e1e1e; padding: 20px; border-radius: 10px; border: 1px solid #333; transition: 0.3s; }
+        :root { --primary: #4a9eff; --secondary: #9b59b6; --author-color: #2ecc71; --bg: #0f0f0f; --card-bg: #1a1a1a; --border: #333; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #e0e0e0; padding: 20px; margin: 0; }
+        
+        /* Layout Grid */
+        .main-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1400px; margin: auto; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .full-width { grid-column: 1 / -1; }
-        h3 { margin-top: 0; color: #4a9eff; border-bottom: 1px solid #333; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
-        label { display: block; margin: 10px 0 5px; font-size: 0.85em; color: #888; }
-        input, textarea { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
-        textarea { height: 80px; resize: vertical; }
-        
-        /* Buttons */
-        .btn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 5px; font-weight: bold; }
-        .btn-char { background: #4a9eff; color: white; }
-        .btn-pers { background: #9b59b6; color: white; }
-        .btn-copy { background: #f1c40f; color: black; font-size: 1.1em; }
-        .btn-browse { background: #2ecc71; color: white; width: auto; margin-top: 0; padding: 0 20px; }
-        .file-label { background: #252525; padding: 10px; display: block; text-align: center; border: 1px dashed #555; cursor: pointer; margin-bottom: 10px; font-size: 0.9em; }
 
-        /* Browser Section */
-        .browser-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        #repoBrowser { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
-            gap: 10px; 
-            max-height: 350px; 
-            overflow-y: auto; 
-            background: #0a0a0a; 
-            padding: 15px; 
-            border-radius: 5px; 
-            border: 1px solid #333;
-        }
-        .repo-item { background: #252525; padding: 8px; border-radius: 5px; text-align: center; cursor: pointer; font-size: 0.8em; border: 1px solid transparent; display: flex; flex-direction: column; align-items: center; justify-content: space-between;}
-        .repo-item:hover { border-color: #4a9eff; background: #2a2a2a; }
-        .repo-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 3px; margin-bottom: 8px; background: #111; }
+        h3 { margin-top: 0; font-size: 1.1em; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        label { display: block; margin: 12px 0 5px; font-size: 0.75em; color: #777; font-weight: bold; }
         
-        #finalOutput { background: #0a0a0a; color: #00ff00; font-family: monospace; height: 100px; }
-        .toggle-container { font-size: 0.7em; color: #fff; display: flex; align-items: center; gap: 8px; }
-        .toggle-container input { width: auto; }
-        .disabled { opacity: 0.4; pointer-events: none; }
+        input, textarea, select { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        textarea { height: 75px; resize: vertical; }
+        
+        /* GitHub Bar */
+        .token-bar { background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+        .token-link { color: var(--primary); text-decoration: none; font-size: 0.75em; border: 1px solid var(--primary); padding: 4px 8px; border-radius: 4px; }
+        
+        /* Browser & Status */
+        #repoBrowser { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
+            gap: 15px; max-height: 350px; overflow-y: auto; background: #050505; 
+            padding: 20px; border-radius: 8px; border: 1px solid var(--border);
+        }
+        .repo-item { background: #222; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .repo-item:hover { background: #2a2a2a; border-color: var(--primary); transform: translateY(-2px); }
+        .repo-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
+
+        /* Status Borders */
+        .gold-status { border-color: #ffd700 !important; box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
+        .blue-status { border-color: #00ccff !important; box-shadow: 0 0 12px rgba(0, 204, 255, 0.3); }
+
+        /* Buttons */
+        .btn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
+        .btn-char { background: var(--primary); color: white; }
+        .btn-pers { background: var(--secondary); color: white; }
+        .btn-auth { background: var(--author-color); color: white; }
+        .btn-copy { background: #f1c40f; color: #000; font-size: 1.1em; }
+        .file-label { background: #252525; padding: 8px; display: block; text-align: center; border: 1px dashed #444; cursor: pointer; border-radius: 6px; font-size: 0.8em; margin-bottom: 10px; }
+
+        #finalOutput { background: #000; color: #00ff00; font-family: 'Consolas', monospace; height: 100px; border: 1px solid #222; margin-top: 10px; }
+        .api-info { font-size: 0.8em; color: #555; margin-left: auto; }
     </style>
 </head>
 <body>
 
-<div class="grid">
+<div class="main-grid">
     <div class="card full-width">
-        <h3>GitHub Explorer</h3>
-        <div class="browser-bar">
-            <select id="repoCategory" style="background:#000; color:#fff; border:1px solid #444; padding:5px; flex:1;">
-                <option value="SFW">SFW</option>
-                <option value="NSFW">NSFW</option>
-                <option value="undereview">Under Review</option>
-            </select>
-            <select id="repoType" style="background:#000; color:#fff; border:1px solid #444; padding:5px; flex:1;">
-                <option value="char">Characters</option>
-                <option value="personas">Personas</option>
-            </select>
-            <input type="text" id="repoSearch" placeholder="Search folder names..." style="flex:2;" onkeyup="filterRepo()">
-            <button class="btn btn-browse" onclick="fetchRepo()">Browse</button>
+        <h3>GitHub Explorer <span id="apiStatus" class="api-info">--/--</span></h3>
+        <div class="token-bar">
+            <input type="password" id="ghToken" placeholder="GitHub Token (PAT)..." style="flex:2;">
+            <button class="btn" style="width:auto; margin:0; background:#444;" onclick="saveToken()">Save</button>
+            <a href="https://github.com/settings/tokens/new?description=RP-Engine&scopes=repo" target="_blank" class="token-link">Get Token</a>
+            <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" class="token-link" style="border-color:#555; color:#777;">Token Guide</a>
         </div>
-        <div id="repoBrowser">
-            <p style="color:#555; font-size:0.9em; text-align:center; grid-column:1/-1;">Click Browse to load your GitHub files.</p>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <select id="repoCat" style="flex:1;"><option value="SFW">SFW</option><option value="NSFW">NSFW</option><option value="undereview">Review</option></select>
+            <select id="repoType" style="flex:1;"><option value="char">Characters</option><option value="personas">Personas</option></select>
+            <input type="text" id="repoSearch" placeholder="Search Folders..." style="flex:2;" onkeyup="filterRepo()">
+            <button class="btn btn-char" style="width:auto; margin:0;" onclick="fetchRepo()">Browse</button>
         </div>
+        <div id="repoBrowser"></div>
     </div>
 
     <div class="card">
-        <h3>1. Character / Scenario (.char)</h3>
-        <label class="file-label">Import .char File <input type="file" id="importChar" accept=".char,.json" style="display:none"></label>
-        <label>Character/Group Name:</label>
-        <input type="text" id="charName" placeholder="e.g. Godzilla">
-        <label>Character Description:</label>
-        <textarea id="charDesc" placeholder="Physicality, personality..."></textarea>
-        <label>Scenario (Optional):</label>
-        <textarea id="scenario" placeholder="The setting or event..."></textarea>
-        <button class="btn btn-char" onclick="exportFile('char')">Save as .char</button>
+        <h3>1. Character / Scenario</h3>
+        <label class="file-label">Import .char <input type="file" id="importChar" style="display:none"></label>
+        <label>Character Name</label><input type="text" id="charName">
+        <label>Description</label><textarea id="charDesc"></textarea>
+        <label>Scenario</label><textarea id="scenario"></textarea>
+        <button class="btn btn-char" onclick="exportFile('char')">Export .char</button>
     </div>
 
-    <div class="card" id="personaCard">
-        <h3>
-            2. Your Persona (.persona)
-            <div class="toggle-container">
-                <input type="checkbox" id="usePersona" checked> <label for="usePersona" style="margin:0; color:white;">ENABLE</label>
-            </div>
-        </h3>
-        <div id="personaFields">
-            <label class="file-label">Import .persona File <input type="file" id="importPers" accept=".persona,.json" style="display:none"></label>
-            <label>Your Name:</label>
-            <input type="text" id="yourName" value="User">
-            <label>Your Description:</label>
-            <textarea id="yourDesc" placeholder="e.g. a brave traveler"></textarea>
-            <button class="btn btn-pers" onclick="exportFile('persona')">Save as .persona</button>
+    <div class="card">
+        <h3>2. Your Persona <input type="checkbox" id="usePersona" checked style="width:auto; float:right;"></h3>
+        <label class="file-label">Import .persona <input type="file" id="importPers" style="display:none"></label>
+        <label>Your Name</label><input type="text" id="yourName" value="User">
+        <label>Description</label><textarea id="yourDesc"></textarea>
+        <button class="btn btn-pers" onclick="exportFile('persona')">Export .persona</button>
+    </div>
+
+    <div class="card">
+        <h3>3. Author File Creator</h3>
+        <label class="file-label">Import .author <input type="file" id="importAuth" style="display:none"></label>
+        <label>Creator Name</label><input type="text" id="authName" placeholder="e.g. AIRPGITHUB team">
+        <label>Creator Notes</label><textarea id="authNotes" placeholder="Links or versioning info..."></textarea>
+        <div id="authorMeta" style="margin-top:20px; padding:12px; background:#111; border-radius:6px; font-size:0.8em;">
+            Loaded: <span id="authFileName" style="color:var(--author-color);">None</span>
         </div>
+        <button class="btn btn-auth" onclick="exportFile('author')">Export .author</button>
     </div>
 
     <div class="card full-width">
-        <h3>3. Final RP Engine Command</h3>
+        <h3>Final RP Output</h3>
         <textarea id="finalOutput" readonly></textarea>
         <button class="btn btn-copy" onclick="copyResult()">COPY FOR RP</button>
     </div>
 </div>
 
 <script>
-    const GITHUB_USER = "kellenTV"; 
+    const GITHUB_USER = "kellenTV";
     const GITHUB_REPO = "AIRPGITHUB";
 
-    // --- REPO BROWSER ---
+    function getHeaders() {
+        const t = localStorage.getItem('rp_token');
+        const h = { 'Accept': 'application/vnd.github.v3+json' };
+        if (t) h['Authorization'] = `token ${t.trim()}`;
+        return h;
+    }
+
+    function saveToken() {
+        localStorage.setItem('rp_token', document.getElementById('ghToken').value);
+        checkLimit(); alert("Token Saved.");
+    }
+    document.getElementById('ghToken').value = localStorage.getItem('rp_token') || "";
+
+    async function checkLimit() {
+        try {
+            const res = await fetch("https://api.github.com/rate_limit", { headers: getHeaders() });
+            const d = await res.json();
+            document.getElementById('apiStatus').innerText = `${d.resources.core.remaining}/${d.resources.core.limit}`;
+        } catch(e){}
+    }
+
     async function fetchRepo() {
-        const cat = document.getElementById('repoCategory').value;
+        const cat = document.getElementById('repoCat').value;
         const type = document.getElementById('repoType').value;
         const browser = document.getElementById('repoBrowser');
-        const path = `${cat}/${type}`;
-        browser.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Scanning Repository...</p>";
+        browser.innerHTML = "Scanning Repo...";
+        checkLimit();
 
         try {
-            const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${path}`);
+            const res = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${cat}/${type}`, { headers: getHeaders() });
             const items = await res.json();
-            
-            if (!Array.isArray(items)) throw new Error("Invalid Path");
-            
             browser.innerHTML = "";
-            const folders = items.filter(f => f.type === 'dir');
 
-            for (const f of folders) {
+            for (const f of items.filter(i => i.type === 'dir')) {
                 const div = document.createElement('div');
                 div.className = 'repo-item';
                 div.setAttribute('data-name', f.name.toLowerCase());
-                // Default placeholder while loading
-                div.innerHTML = `<div style="width:100%; aspect-ratio:1/1; background:#111; border-radius:3px; margin-bottom:5px;"></div><span>${f.name}</span>`;
+                div.innerHTML = `<div style="width:100%; aspect-ratio:1/1; background:#111; border-radius:6px;"></div><span>${f.name}</span>`;
                 browser.appendChild(div);
 
-                // Fetch internal folder content for images and data
-                fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${f.path}`)
-                    .then(r => r.json())
-                    .then(files => {
-                        // Find ANY image format
-                        const img = files.find(file => file.name.match(/\.(png|jpg|jpeg|webp|gif|bmp|svg)$/i));
-                        const imgHtml = img ? `<img src="${img.download_url}" alt="${f.name}">` : `<div style="width:100%; aspect-ratio:1/1; background:#333; display:flex; align-items:center; justify-content:center; border-radius:3px; margin-bottom:5px; font-size:10px; color:#555;">NO IMG</div>`;
+                fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${f.path}`, { headers: getHeaders() })
+                    .then(r => r.json()).then(async files => {
+                        const img = files.find(x => x.name.match(/\.(png|jpg|webp|jpeg)$/i));
+                        const authFile = files.find(x => x.name.endsWith('.author') || x.name === 'creator.author');
                         
-                        div.innerHTML = `${imgHtml}<span>${f.name}</span>`;
+                        if (authFile) {
+                            const aRes = await fetch(authFile.url, { headers: { ...getHeaders(), 'Accept': 'application/vnd.github.v3.raw' } });
+                            const aData = JSON.parse((await aRes.text()).replace(/,[ \t\r\n]*}/g, '}'));
+                            if (aData.original === true) div.classList.add('gold-status');
+                            else if (aData.verified === true) div.classList.add('blue-status');
+                        }
+                        div.innerHTML = (img ? `<img src="${img.download_url}">` : `<div></div>`) + `<span>${f.name}</span>`;
                         div.onclick = () => loadData(files, type, f.name);
                     });
             }
-        } catch (e) { 
-            browser.innerHTML = `<p style="grid-column:1/-1; text-align:center; color:#ff4a4a;">Error: Folder '${path}' not found or API limit reached.</p>`; 
-        }
+        } catch(e) { browser.innerHTML = "Error loading. Check Token."; }
     }
 
-    function filterRepo() {
-        const q = document.getElementById('repoSearch').value.toLowerCase();
-        const items = document.querySelectorAll('.repo-item');
-        let visibleCount = 0;
-
-        items.forEach(i => {
-            const name = i.getAttribute('data-name');
-            if (name.includes(q)) {
-                i.style.display = 'flex';
-                visibleCount++;
-            } else {
-                i.style.display = 'none';
-            }
-        });
-    }
-
-    // --- DATA LOADING ---
     async function loadData(files, type, folderName) {
-        const ext = (type === 'personas') ? '.persona' : '.char';
-        const dataFile = files.find(f => f.name.toLowerCase().endsWith(ext) || f.name.toLowerCase().endsWith('.json'));
-        
-        if (!dataFile) return alert("No .char or .persona file found in this folder.");
+        const dataFile = files.find(f => f.name.match(/\.(char|persona|json)$/i));
+        const authorFile = files.find(f => f.name.endsWith('.author') || f.name === 'creator.author');
 
-        const res = await fetch(dataFile.download_url);
-        const data = await res.json();
-
-        if (type === 'personas') {
-            document.getElementById('yourName').value = data.name || folderName;
-            document.getElementById('yourDesc').value = data.description || "";
+        // FIXED: Load Author from file
+        if (authorFile) {
+            const aRes = await fetch(authorFile.url, { headers: { ...getHeaders(), 'Accept': 'application/vnd.github.v3.raw' } });
+            const aData = JSON.parse((await aRes.text()).replace(/,[ \t\r\n]*}/g, '}'));
+            document.getElementById('authName').value = aData.author || aData.name || "";
+            document.getElementById('authNotes').value = aData.notes || "";
+            document.getElementById('authFileName').innerText = authorFile.name;
         } else {
-            document.getElementById('charName').value = data.name || folderName;
-            document.getElementById('charDesc').value = data.description || "";
-            document.getElementById('scenario').value = data.scenario || "";
+            document.getElementById('authFileName').innerText = "None";
+        }
+
+        if (!dataFile) return;
+        const res = await fetch(dataFile.url, { headers: { ...getHeaders(), 'Accept': 'application/vnd.github.v3.raw' } });
+        const d = JSON.parse((await res.text()).replace(/,[ \t\r\n]*}/g, '}'));
+        
+        if (type === 'personas') {
+            document.getElementById('yourName').value = d.name || folderName;
+            document.getElementById('yourDesc').value = d.description || "";
+        } else {
+            document.getElementById('charName').value = d.name || folderName;
+            document.getElementById('charDesc').value = d.description || "";
+            document.getElementById('scenario').value = d.scenario || "";
         }
         update();
     }
 
-    // --- CORE LOGIC & EXPORT ---
     function update() {
-        const cName = document.getElementById('charName').value;
-        const cDesc = document.getElementById('charDesc').value;
-        const scene = document.getElementById('scenario').value;
-        const pName = document.getElementById('yourName').value;
-        const pDesc = document.getElementById('yourDesc').value;
+        const cN = document.getElementById('charName').value;
+        const cD = document.getElementById('charDesc').value;
+        const s = document.getElementById('scenario').value;
+        const pN = document.getElementById('yourName').value;
+        const pD = document.getElementById('yourDesc').value;
         const useP = document.getElementById('usePersona').checked;
 
-        document.getElementById('personaFields').className = useP ? "" : "disabled";
-
-        let str = `You are ${cName || '[Character]'}. ${cDesc}. `;
-        if (scene) str += `In this scenario: ${scene}. `;
-        if (useP) str += `I am ${pName || 'User'}, described as: ${pDesc || 'a traveler'}.`;
+        let str = `You are ${cN || 'the character'}. ${cD}. `;
+        if (s) str += `Scenario: ${s}. `;
+        if (useP) str += `I am ${pN}: ${pD}`;
         document.getElementById('finalOutput').value = str;
     }
 
     function exportFile(type) {
-        let data, filename;
+        let data, name;
         if (type === 'char') {
-            data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value };
-            filename = (data.name || "character") + ".char";
-        } else {
+            data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value, author: document.getElementById('authName').value };
+            name = (data.name || "char") + ".char";
+        } else if (type === 'persona') {
             data = { name: document.getElementById('yourName').value, description: document.getElementById('yourDesc').value };
-            filename = (data.name || "persona") + ".persona";
+            name = (data.name || "user") + ".persona";
+        } else {
+            data = { author: document.getElementById('authName').value, notes: document.getElementById('authNotes').value };
+            name = "creator.author";
         }
         const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+        a.href = URL.createObjectURL(blob); a.download = name; a.click();
+    }
+
+    function filterRepo() {
+        const q = document.getElementById('repoSearch').value.toLowerCase();
+        document.querySelectorAll('.repo-item').forEach(i => {
+            i.style.display = i.getAttribute('data-name').includes(q) ? 'flex' : 'none';
+        });
     }
 
     function copyResult() {
-        const output = document.getElementById('finalOutput');
-        output.select();
-        document.execCommand('copy');
-        const btn = document.querySelector('.btn-copy');
-        btn.innerText = "COPIED!";
-        setTimeout(() => btn.innerText = "COPY FOR RP", 2000);
+        document.getElementById('finalOutput').select(); document.execCommand('copy');
     }
 
-    // Init listeners
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', update));
     document.getElementById('usePersona').addEventListener('change', update);
-    
-    // File upload listeners
-    document.getElementById('importChar').onchange = (e) => handleFile(e, 'char');
-    document.getElementById('importPers').onchange = (e) => handleFile(e, 'pers');
-
-    function handleFile(e, type) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const data = JSON.parse(ev.target.result);
-            if(type === 'char') {
-                document.getElementById('charName').value = data.name || "";
-                document.getElementById('charDesc').value = data.description || "";
-                document.getElementById('scenario').value = data.scenario || "";
-            } else {
-                document.getElementById('yourName').value = data.name || "";
-                document.getElementById('yourDesc').value = data.description || "";
-            }
-            update();
-        };
-        reader.readAsText(e.target.files[0]);
-    }
-
-    update();
+    checkLimit(); update();
 </script>
 </body>
 </html>
