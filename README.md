@@ -12,7 +12,7 @@ starting senerio(can be blank)
 {historystart}  
 all previous messages go here ex:  
 {user}hello  
-{character}hello to you  
+{character}{character="person"}hello to you  
 {historyend}  
 {current user message}  
 what they said  
