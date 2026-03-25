@@ -1,1 +1,1 @@
-This version is for if you want to make a website using this prompt and chartacter selection use github apis to load everything info .char .personas and .authors are all json now this is not finnished yet for anything else
+This version is for if you want to make a website using this prompt and chartacter selection use github apis to load everything info .char .personas and .authors are all json now this is not finnished yet for anything else so do not use this until finished
