@@ -3,7 +3,7 @@ This version is for if you want to make a website using this prompt and chartact
 {persona}
 username
 userdescription
-{personaend}
+{personaend}  
 {characterinfo start}
 character/groupname
 character/groupdescription
