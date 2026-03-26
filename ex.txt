@@ -1,0 +1,15 @@
+{persona}
+testpersona
+testdesciption
+{personaend}
+{characterinfo start}
+testchar/group
+testchar/group desc
+{characterinfo end}
+{historystart}
+{user}hello
+{character}{character="test"}hello to you
+{historyend}
+{current user message}
+hello *i punch you*
+{current user message end}
