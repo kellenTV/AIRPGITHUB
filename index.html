@@ -6,7 +6,6 @@
         :root { --primary: #4a9eff; --secondary: #9b59b6; --author-color: #2ecc71; --bg: #0f0f0f; --card-bg: #1a1a1a; --border: #333; }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #e0e0e0; padding: 20px; margin: 0; }
         
-        /* Layout Grid */
         .main-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1400px; margin: auto; }
         .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .full-width { grid-column: 1 / -1; }
@@ -31,7 +30,7 @@
         .repo-item:hover { background: #2a2a2a; border-color: var(--primary); transform: translateY(-2px); }
         .repo-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
 
-        /* Status Borders */
+        /* Status Borders - Blocked in Review via JS */
         .gold-status { border-color: #ffd700 !important; box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
         .blue-status { border-color: #00ccff !important; box-shadow: 0 0 12px rgba(0, 204, 255, 0.3); }
 
@@ -117,7 +116,6 @@
         localStorage.setItem('rp_token', document.getElementById('ghToken').value);
         checkLimit(); alert("Token Saved.");
     }
-    document.getElementById('ghToken').value = localStorage.getItem('rp_token') || "";
 
     async function checkLimit() {
         try {
@@ -151,12 +149,16 @@
                         const img = files.find(x => x.name.match(/\.(png|jpg|webp|jpeg)$/i));
                         const authFile = files.find(x => x.name.endsWith('.author') || x.name === 'creator.author');
                         
-                        if (authFile) {
-                            const aRes = await fetch(authFile.url, { headers: { ...getHeaders(), 'Accept': 'application/vnd.github.v3.raw' } });
-                            const aData = JSON.parse((await aRes.text()).replace(/,[ \t\r\n]*}/g, '}'));
-                            if (aData.original === true) div.classList.add('gold-status');
-                            else if (aData.verified === true) div.classList.add('blue-status');
+                        // Ring Logic: Block rings if category is undereview
+                        if (authFile && cat !== 'undereview') {
+                            try {
+                                const aRes = await fetch(authFile.url, { headers: { ...getHeaders(), 'Accept': 'application/vnd.github.v3.raw' } });
+                                const aData = JSON.parse((await aRes.text()).replace(/,[ \t\r\n]*}/g, '}'));
+                                if (aData.original === true) div.classList.add('gold-status');
+                                else if (aData.verified === true) div.classList.add('blue-status');
+                            } catch(e) {}
                         }
+
                         div.innerHTML = (img ? `<img src="${img.download_url}">` : `<div></div>`) + `<span>${f.name}</span>`;
                         div.onclick = () => loadData(files, type, f.name);
                     });
@@ -168,7 +170,7 @@
         const dataFile = files.find(f => f.name.match(/\.(char|persona|json)$/i));
         const authorFile = files.find(f => f.name.endsWith('.author') || f.name === 'creator.author');
 
-        // FIXED: Load Author from file
+        // Feature Restored: Logic checks for author, clears if missing
         if (authorFile) {
             const aRes = await fetch(authorFile.url, { headers: { ...getHeaders(), 'Accept': 'application/vnd.github.v3.raw' } });
             const aData = JSON.parse((await aRes.text()).replace(/,[ \t\r\n]*}/g, '}'));
@@ -176,7 +178,9 @@
             document.getElementById('authNotes').value = aData.notes || "";
             document.getElementById('authFileName').innerText = authorFile.name;
         } else {
-            document.getElementById('authFileName').innerText = "None";
+            document.getElementById('authName').value = "";
+            document.getElementById('authNotes').value = "";
+            document.getElementById('authFileName').innerText = "None (Required)";
         }
 
         if (!dataFile) return;
@@ -211,7 +215,7 @@
     function exportFile(type) {
         let data, name;
         if (type === 'char') {
-            data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value, author: document.getElementById('authName').value };
+            data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value };
             name = (data.name || "char") + ".char";
         } else if (type === 'persona') {
             data = { name: document.getElementById('yourName').value, description: document.getElementById('yourDesc').value };
@@ -225,10 +229,32 @@
         a.href = URL.createObjectURL(blob); a.download = name; a.click();
     }
 
+    // Restore File Upload Listeners
+    function handleFile(e, targetId1, targetId2, targetId3) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const d = JSON.parse(e.target.result);
+            if (targetId1) document.getElementById(targetId1).value = d.name || d.author || "";
+            if (targetId2) document.getElementById(targetId2).value = d.description || d.notes || "";
+            if (targetId3) document.getElementById(targetId3).value = d.scenario || "";
+            update();
+        };
+        reader.readAsText(file);
+    }
+
+    document.getElementById('importChar').addEventListener('change', (e) => handleFile(e, 'charName', 'charDesc', 'scenario'));
+    document.getElementById('importPers').addEventListener('change', (e) => handleFile(e, 'yourName', 'yourDesc'));
+    document.getElementById('importAuth').addEventListener('change', (e) => {
+        handleFile(e, 'authName', 'authNotes');
+        document.getElementById('authFileName').innerText = e.target.files[0].name;
+    });
+
     function filterRepo() {
         const q = document.getElementById('repoSearch').value.toLowerCase();
         document.querySelectorAll('.repo-item').forEach(i => {
-            i.style.display = i.getAttribute('data-name').includes(q) ? 'flex' : 'none';
+            i.style.display = i.innerText.toLowerCase().includes(q) ? 'block' : 'none';
         });
     }
 
@@ -238,6 +264,7 @@
 
     document.querySelectorAll('input, textarea').forEach(el => el.addEventListener('input', update));
     document.getElementById('usePersona').addEventListener('change', update);
+    document.getElementById('ghToken').value = localStorage.getItem('rp_token') || "";
     checkLimit(); update();
 </script>
 </body>
