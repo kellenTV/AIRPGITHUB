@@ -26,7 +26,7 @@
     </style>
 </head>
 <body class="font-['Segoe_UI',system-ui,sans-serif] bg-[#0f0f0f] text-[#e0e0e0] p-[20px] m-0">
-
+<!--ah yes the humble github token area -->
 <div class="grid grid-cols-3 gap-[20px] max-w-[1400px] mx-auto">
     <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)] col-span-full">
         <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">GitHub Explorer <span id="apiStatus" class="text-[0.8em] text-[#555] ml-auto">--/--</span></h3>
@@ -36,6 +36,7 @@
             <a href="https://github.com/settings/tokens/new?description=RP-Engine&scopes=repo" target="_blank" class="text-[#4a9eff] no-underline text-[0.75em] border border-[#4a9eff] p-[4px_8px] rounded-[4px]">Get Token</a>
             <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" class="no-underline text-[0.75em] border p-[4px_8px] rounded-[4px] border-[#555] text-[#777]">Token Guide</a>
         </div>
+        <!--where you can browse for premade characters if you are lazy-->
         <div class="flex gap-[10px] mb-[15px]">
             <select id="repoCat" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit flex-1"><option value="SFW">SFW</option><option value="NSFW">NSFW</option><option value="undereview">Review</option></select>
             <select id="repoType" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit flex-1"><option value="char">Characters</option><option value="personas">Personas</option></select>
@@ -44,10 +45,18 @@
         </div>
         <div id="repoBrowser" class="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-[15px] max-h-[350px] overflow-y-auto bg-[#050505] p-[20px] rounded-[8px] border border-[#333]"></div>
     </div>
-
+    <!--the end of that area-->
+    <!--The selectors area-->
     <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-    <input type=checkbox>
+    <input type=checkbox id="mc"> <h3>Mature themes?</h3>
+    <input type=checkbox id="rc"> <h3>Research(often does not work only for ai models that can research)?</h3>
+    <input type=checkbox id="mc"> <h3>Research(often does not work only for ai models that can research)?</h3>
+    <select name="formating">
+    <option>None</option>
+    <option>Markdown</option>
+    </select>
     </div>
+    <!--the end of selectors i will add more comments later-->
 
     <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
         <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">1. Character / Scenario</h3>
