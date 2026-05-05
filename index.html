@@ -5,7 +5,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style type="text/tailwindcss">
         @layer components {
-            /* Kept in CSS because JavaScript dynamically creates and targets these class names */
             .repo-item {
                 @apply bg-[#222] p-[10px] rounded-[8px] text-center cursor-pointer border-2 border-transparent transition-[0.2s];
             }
@@ -44,6 +43,10 @@
             <button class="w-auto m-0 p-[12px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#4a9eff] text-white" onclick="fetchRepo()">Browse</button>
         </div>
         <div id="repoBrowser" class="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-[15px] max-h-[350px] overflow-y-auto bg-[#050505] p-[20px] rounded-[8px] border border-[#333]"></div>
+    </div>
+
+    <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+    <input type=checkbox>
     </div>
 
     <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
