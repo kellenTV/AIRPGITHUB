@@ -46,27 +46,6 @@
         <div id="repoBrowser" class="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-[15px] max-h-[350px] overflow-y-auto bg-[#050505] p-[20px] rounded-[8px] border border-[#333]"></div>
     </div>
     <!--the end of that area-->
-    <!--The selectors area-->
-<div id="tags" class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-    <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">RP Tags & Formatting</h3>
-    <div class="flex items-center justify-between mb-3">
-        <label class="text-[0.75em] text-[#777] font-bold uppercase tracking-wide">Allow Mature Themes(Yes includes cursing)?</label>
-        <input type="checkbox" id="mc" class="w-4 h-4 accent-[#4a9eff]">
-    </div>
-    <div class="flex items-center justify-between mb-4">
-        <label class="text-[0.75em] text-[#777] font-bold uppercase tracking-wide">
-            Enable Research? <span class="italic normal-case opacity-60">Note: only can be used with certain models and only works like 10% of the time</span>
-        </label>
-        <input type="checkbox" id="rc" class="w-4 h-4 accent-[#4a9eff]">
-    </div>
-    <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold uppercase tracking-wide">Formatting Options</label>
-    <select name="formating" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit cursor-pointer focus:border-[#4a9eff] outline-none">
-        <option>Plain text</option>
-        <option>Markdown</option>
-        <option>Markdown + Latex</option>
-    </select>
-</div>
-    <!--the end of selectors i will add more comments later-->
 
     <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
         <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">1. Character / Scenario</h3>
@@ -95,6 +74,27 @@
         </div>
         <button class="w-full p-[12px] mt-[10px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#2ecc71] text-white" onclick="exportFile('author')">Export .author</button>
     </div>
+        <!--The selectors area-->
+<div id="tags" class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+    <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">RP Tags & Formatting</h3>
+    <div class="flex items-center justify-between mb-3">
+        <label class="text-[0.75em] text-[#777] font-bold uppercase tracking-wide">Allow Mature Themes(Yes includes cursing)?</label>
+        <input type="checkbox" id="mc" class="w-4 h-4 accent-[#4a9eff]">
+    </div>
+    <div class="flex items-center justify-between mb-4">
+        <label class="text-[0.75em] text-[#777] font-bold uppercase tracking-wide">
+            Enable Research? <span class="italic normal-case opacity-60">Note: only can be used with certain models and only works like 10% of the time</span>
+        </label>
+        <input type="checkbox" id="rc" class="w-4 h-4 accent-[#4a9eff]">
+    </div>
+    <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold uppercase tracking-wide">Formatting Options</label>
+    <select name="formating" id="formating" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit cursor-pointer focus:border-[#4a9eff] outline-none">
+        <option>Plain text</option>
+        <option>Markdown</option>
+        <option>Markdown + Latex</option>
+    </select>
+</div>
+    <!--the end of selectors i will add more comments later-->
 
     <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)] col-span-full">
         <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">Final RP Output</h3>
@@ -199,22 +199,48 @@
         }
         update();
     }
-
-    function update() {
-        const cN = document.getElementById('charName').value;
-        const cD = document.getElementById('charDesc').value;
-        const s = document.getElementById('scenario').value;
-        const pN = document.getElementById('yourName').value;
-        const pD = document.getElementById('yourDesc').value;
-        const useP = document.getElementById('usePersona').checked;
-
-        let str = `You are ${cN || 'the character'}. ${cD}. `;
-        if (s) str += `Scenario: ${s}. `;
-        if (useP) str += `I am ${pN}: ${pD}`;
-        document.getElementById('finalOutput').value = str;
+function update() {
+    const cN = document.getElementById('charName').value;
+    const cD = document.getElementById('charDesc').value;
+    const s = document.getElementById('scenario').value;
+    const pN = document.getElementById('yourName').value;
+    const pD = document.getElementById('yourDesc').value;
+    const useP = document.getElementById('usePersona').checked;
+    const isMature = document.getElementById('mc').checked;
+    const isResearch = document.getElementById('rc').checked;
+    const format = document.getElementById('formating').value;
+    
+    let str = `You are ${cN || 'the character'}. `;
+    
+    if (cD.trim()) {
+        str += `${cD}. `;
     }
 
-    function exportFile(type) {
+    if (s.trim()) {
+        str += `Scenario: ${s}. `;
+    }
+
+    if (useP()) {
+        str += `\n \n \n I am ${pN} ${pD}`;
+    }
+
+    if (isMature) {
+        str += `\n*CA*`;
+    }
+    if (isResearch) {
+        str += `\n*RA*`;
+    }
+    if (format === "Markdown") {
+        str += `\nmd`;
+    } else if (format === "Markdown + Latex") {
+        str += `\nmd2`;
+    }
+    document.getElementById('finalOutput').value = str.trim();
+}
+
+    // 7. Output to the textarea
+    document.getElementById('finalOutput').value = str.trim();
+}    function exportFile(type) {
         let data, name;
         if (type === 'char') {
             data = { name: document.getElementById('charName').value, description: document.getElementById('charDesc').value, scenario: document.getElementById('scenario').value };
