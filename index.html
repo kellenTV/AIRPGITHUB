@@ -2,102 +2,82 @@
 <html>
 <head>
     <title>RP Engine</title>
-    <style>
-        :root { --primary: #4a9eff; --secondary: #9b59b6; --author-color: #2ecc71; --bg: #0f0f0f; --card-bg: #1a1a1a; --border: #333; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #e0e0e0; padding: 20px; margin: 0; }
-        
-        .main-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1400px; margin: auto; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .full-width { grid-column: 1 / -1; }
-
-        h3 { margin-top: 0; font-size: 1.1em; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        label { display: block; margin: 12px 0 5px; font-size: 0.75em; color: #777; font-weight: bold; }
-        
-        input, textarea, select { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
-        textarea { height: 75px; resize: vertical; }
-        
-        /* GitHub Bar */
-        .token-bar { background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
-        .token-link { color: var(--primary); text-decoration: none; font-size: 0.75em; border: 1px solid var(--primary); padding: 4px 8px; border-radius: 4px; }
-        
-        /* Browser & Status */
-        #repoBrowser { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); 
-            gap: 15px; max-height: 350px; overflow-y: auto; background: #050505; 
-            padding: 20px; border-radius: 8px; border: 1px solid var(--border);
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer components {
+            /* Kept in CSS because JavaScript dynamically creates and targets these class names */
+            .repo-item {
+                @apply bg-[#222] p-[10px] rounded-[8px] text-center cursor-pointer border-2 border-transparent transition-[0.2s];
+            }
+            .repo-item:hover {
+                @apply bg-[#2a2a2a] border-[#4a9eff] -translate-y-[2px];
+            }
+            .repo-item img {
+                @apply w-full aspect-square object-cover rounded-[6px] mb-[8px];
+            }
+            .gold-status {
+                border-color: #ffd700 !important;
+                box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+            }
+            .blue-status {
+                border-color: #00ccff !important;
+                box-shadow: 0 0 12px rgba(0, 204, 255, 0.3);
+            }
         }
-        .repo-item { background: #222; padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
-        .repo-item:hover { background: #2a2a2a; border-color: var(--primary); transform: translateY(-2px); }
-        .repo-item img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
-
-        /* Status Borders - Blocked in Review via JS */
-        .gold-status { border-color: #ffd700 !important; box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
-        .blue-status { border-color: #00ccff !important; box-shadow: 0 0 12px rgba(0, 204, 255, 0.3); }
-
-        /* Buttons */
-        .btn { width: 100%; padding: 12px; margin-top: 10px; cursor: pointer; border: none; border-radius: 6px; font-weight: bold; transition: 0.2s; }
-        .btn-char { background: var(--primary); color: white; }
-        .btn-pers { background: var(--secondary); color: white; }
-        .btn-auth { background: var(--author-color); color: white; }
-        .btn-copy { background: #f1c40f; color: #000; font-size: 1.1em; }
-        .file-label { background: #252525; padding: 8px; display: block; text-align: center; border: 1px dashed #444; cursor: pointer; border-radius: 6px; font-size: 0.8em; margin-bottom: 10px; }
-
-        #finalOutput { background: #000; color: #00ff00; font-family: 'Consolas', monospace; height: 100px; border: 1px solid #222; margin-top: 10px; }
-        .api-info { font-size: 0.8em; color: #555; margin-left: auto; }
     </style>
 </head>
-<body>
+<body class="font-['Segoe_UI',system-ui,sans-serif] bg-[#0f0f0f] text-[#e0e0e0] p-[20px] m-0">
 
-<div class="main-grid">
-    <div class="card full-width">
-        <h3>GitHub Explorer <span id="apiStatus" class="api-info">--/--</span></h3>
-        <div class="token-bar">
-            <input type="password" id="ghToken" placeholder="GitHub Token (PAT)..." style="flex:2;">
-            <button class="btn" style="width:auto; margin:0; background:#444;" onclick="saveToken()">Save</button>
-            <a href="https://github.com/settings/tokens/new?description=RP-Engine&scopes=repo" target="_blank" class="token-link">Get Token</a>
-            <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" class="token-link" style="border-color:#555; color:#777;">Token Guide</a>
+<div class="grid grid-cols-3 gap-[20px] max-w-[1400px] mx-auto">
+    <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)] col-span-full">
+        <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">GitHub Explorer <span id="apiStatus" class="text-[0.8em] text-[#555] ml-auto">--/--</span></h3>
+        <div class="bg-[#111] p-[15px] rounded-[8px] border border-[#333] mb-[20px] flex gap-[10px] items-center">
+            <input type="password" id="ghToken" placeholder="GitHub Token (PAT)..." class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit flex-[2]">
+            <button class="w-auto m-0 p-[12px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#444] text-white" onclick="saveToken()">Save</button>
+            <a href="https://github.com/settings/tokens/new?description=RP-Engine&scopes=repo" target="_blank" class="text-[#4a9eff] no-underline text-[0.75em] border border-[#4a9eff] p-[4px_8px] rounded-[4px]">Get Token</a>
+            <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" class="no-underline text-[0.75em] border p-[4px_8px] rounded-[4px] border-[#555] text-[#777]">Token Guide</a>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <select id="repoCat" style="flex:1;"><option value="SFW">SFW</option><option value="NSFW">NSFW</option><option value="undereview">Review</option></select>
-            <select id="repoType" style="flex:1;"><option value="char">Characters</option><option value="personas">Personas</option></select>
-            <input type="text" id="repoSearch" placeholder="Search Folders..." style="flex:2;" onkeyup="filterRepo()">
-            <button class="btn btn-char" style="width:auto; margin:0;" onclick="fetchRepo()">Browse</button>
+        <div class="flex gap-[10px] mb-[15px]">
+            <select id="repoCat" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit flex-1"><option value="SFW">SFW</option><option value="NSFW">NSFW</option><option value="undereview">Review</option></select>
+            <select id="repoType" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit flex-1"><option value="char">Characters</option><option value="personas">Personas</option></select>
+            <input type="text" id="repoSearch" placeholder="Search Folders..." class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit flex-[2]" onkeyup="filterRepo()">
+            <button class="w-auto m-0 p-[12px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#4a9eff] text-white" onclick="fetchRepo()">Browse</button>
         </div>
-        <div id="repoBrowser"></div>
+        <div id="repoBrowser" class="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-[15px] max-h-[350px] overflow-y-auto bg-[#050505] p-[20px] rounded-[8px] border border-[#333]"></div>
     </div>
 
-    <div class="card">
-        <h3>1. Character / Scenario</h3>
-        <label class="file-label">Import .char <input type="file" id="importChar" style="display:none"></label>
-        <label>Character Name</label><input type="text" id="charName">
-        <label>Description</label><textarea id="charDesc"></textarea>
-        <label>Scenario</label><textarea id="scenario"></textarea>
-        <button class="btn btn-char" onclick="exportFile('char')">Export .char</button>
+    <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">1. Character / Scenario</h3>
+        <label class="bg-[#252525] p-[8px] block text-center border border-dashed border-[#444] cursor-pointer rounded-[6px] text-[0.8em] mb-[10px]">Import .char <input type="file" id="importChar" class="hidden"></label>
+        <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold">Character Name</label><input type="text" id="charName" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit">
+        <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold">Description</label><textarea id="charDesc" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit h-[75px] resize-y"></textarea>
+        <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold">Scenario</label><textarea id="scenario" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit h-[75px] resize-y"></textarea>
+        <button class="w-full p-[12px] mt-[10px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#4a9eff] text-white" onclick="exportFile('char')">Export .char</button>
     </div>
 
-    <div class="card">
-        <h3>2. Your Persona <input type="checkbox" id="usePersona" checked style="width:auto; float:right;"></h3>
-        <label class="file-label">Import .persona <input type="file" id="importPers" style="display:none"></label>
-        <label>Your Name</label><input type="text" id="yourName" value="User">
-        <label>Description</label><textarea id="yourDesc"></textarea>
-        <button class="btn btn-pers" onclick="exportFile('persona')">Export .persona</button>
+    <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">2. Your Persona <input type="checkbox" id="usePersona" checked class="w-auto float-right p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit"></h3>
+        <label class="bg-[#252525] p-[8px] block text-center border border-dashed border-[#444] cursor-pointer rounded-[6px] text-[0.8em] mb-[10px]">Import .persona <input type="file" id="importPers" class="hidden"></label>
+        <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold">Your Name</label><input type="text" id="yourName" value="User" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit">
+        <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold">Description</label><textarea id="yourDesc" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit h-[75px] resize-y"></textarea>
+        <button class="w-full p-[12px] mt-[10px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#9b59b6] text-white" onclick="exportFile('persona')">Export .persona</button>
     </div>
 
-    <div class="card">
-        <h3>3. Author File Creator</h3>
-        <label class="file-label">Import .author <input type="file" id="importAuth" style="display:none"></label>
-        <label>Creator Name</label><input type="text" id="authName" placeholder="e.g. AIRPGITHUB team">
-        <label>Creator Notes</label><textarea id="authNotes" placeholder="Links or versioning info..."></textarea>
-        <div id="authorMeta" style="margin-top:20px; padding:12px; background:#111; border-radius:6px; font-size:0.8em;">
-            Loaded: <span id="authFileName" style="color:var(--author-color);">None</span>
+    <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">3. Author File Creator</h3>
+        <label class="bg-[#252525] p-[8px] block text-center border border-dashed border-[#444] cursor-pointer rounded-[6px] text-[0.8em] mb-[10px]">Import .author <input type="file" id="importAuth" class="hidden"></label>
+        <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold">Creator Name</label><input type="text" id="authName" placeholder="e.g. AIRPGITHUB team" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit">
+        <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold">Creator Notes</label><textarea id="authNotes" placeholder="Links or versioning info..." class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit h-[75px] resize-y"></textarea>
+        <div id="authorMeta" class="mt-[20px] p-[12px] bg-[#111] rounded-[6px] text-[0.8em]">
+            Loaded: <span id="authFileName" class="text-[#2ecc71]">None</span>
         </div>
-        <button class="btn btn-auth" onclick="exportFile('author')">Export .author</button>
+        <button class="w-full p-[12px] mt-[10px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#2ecc71] text-white" onclick="exportFile('author')">Export .author</button>
     </div>
 
-    <div class="card full-width">
-        <h3>Final RP Output</h3>
-        <textarea id="finalOutput" readonly></textarea>
-        <button class="btn btn-copy" onclick="copyResult()">COPY FOR RP</button>
+    <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)] col-span-full">
+        <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">Final RP Output</h3>
+        <textarea id="finalOutput" class="w-full p-[10px] rounded-[6px] box-border resize-y bg-black text-[#00ff00] font-['Consolas',monospace] h-[100px] border border-[#222] mt-[10px]" readonly></textarea>
+        <button class="w-full p-[12px] mt-[10px] cursor-pointer border-none rounded-[6px] font-bold transition-[0.2s] bg-[#f1c40f] text-[#000] text-[1.1em]" onclick="copyResult()">COPY FOR RP</button>
     </div>
 </div>
 
