@@ -47,17 +47,25 @@
     </div>
     <!--the end of that area-->
     <!--The selectors area-->
-    <div id="tags" class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-        <h5 class="text-[#4a9eff] font-bold">Rp tags</h1>
-        <h5 class="text-[#777] font-bold">Mature themes(yes this does include cursing) allowed?</h3><input type=checkbox id="mc">
-        <h5 class="text-[#777] font-bold">Research? <span class="italic">note:only works on supported models and only works like 10% of the time</span></h3> <input type=checkbox id="rc">
-        <h2 class="text-[#777] font-bold">Formating options</h2>
-        <select name="formating" class="text-black rounded">
-            <option>Plain text</option>
-            <option>Markdown</option>
-            <option>Markdown+Latex(mainly only gemini supports latex)</option>
-        </select>
+<div id="tags" class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+    <h3 class="mt-0 text-[1.1em] text-[#4a9eff] border-b border-[#333] pb-[10px] mb-[15px] uppercase tracking-[1px]">RP Tags & Formatting</h3>
+    <div class="flex items-center justify-between mb-3">
+        <label class="text-[0.75em] text-[#777] font-bold uppercase tracking-wide">Allow Mature Themes(Yes includes cursing)?</label>
+        <input type="checkbox" id="mc" class="w-4 h-4 accent-[#4a9eff]">
     </div>
+    <div class="flex items-center justify-between mb-4">
+        <label class="text-[0.75em] text-[#777] font-bold uppercase tracking-wide">
+            Enable Research? <span class="italic normal-case opacity-60">Note only can be used with certain models and only works like 10% of the time</span>
+        </label>
+        <input type="checkbox" id="rc" class="w-4 h-4 accent-[#4a9eff]">
+    </div>
+    <label class="block m-[12px_0_5px] text-[0.75em] text-[#777] font-bold uppercase tracking-wide">Formatting Options</label>
+    <select name="formating" class="w-full p-[10px] bg-black border border-[#444] text-white rounded-[6px] box-border font-inherit cursor-pointer focus:border-[#4a9eff] outline-none">
+        <option>Plain text</option>
+        <option>Markdown</option>
+        <option>Markdown + Latex</option>
+    </select>
+</div>
     <!--the end of selectors i will add more comments later-->
 
     <div class="bg-[#1a1a1a] p-[20px] rounded-[12px] border border-[#333] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
