@@ -1,4 +1,5 @@
-## Ads give us funds ( :
+# Ads give us funds ( :
+## Sponsored by GitAds
 [![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=kellentv/airpgithub@github)](https://gitads.dev/v1/ad-track?source=kellentv/airpgithub@github)
 The ads give us funds to use for future updates to the project including making it so you can chat in website
 
