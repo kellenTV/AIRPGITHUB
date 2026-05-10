@@ -1,6 +1,6 @@
 ## Ads give us funds ( :
 [![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=kellentv/airpgithub@github)](https://gitads.dev/v1/ad-track?source=kellentv/airpgithub@github)
-The ads allow for a potential way to chat in the future
+The ads give us funds to use for future updates to the project including making it so you can chat in website
 
 # Documentation
 The litteral best way to chat without the stupidity of any of the ai chat bots use this on anything with the requirment of a system prompt that is custom change the system prompt toIdentity
