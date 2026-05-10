@@ -2,15 +2,16 @@
 [![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=kellentv/airpgithub@github)](https://gitads.dev/v1/ad-track?source=kellentv/airpgithub@github)
 The ads allow for a potential way to chat in the future
 
+# Documentation
 The litteral best way to chat without the stupidity of any of the ai chat bots use this on anything with the requirment of a system prompt that is custom change the system prompt toIdentity
 
-## Sytem prompt to enter is in the txt file
+### Sytem prompt to enter is in the txt file
 
-## Website to auto make and download a file to share characters and personas
+### Website to auto make and download a file to share characters and personas
 go to the [this link](https://kellentv.github.io/AIRPGITHUB/)
 for a easier expierence
 
-## Google AI Studio
+### Google AI Studio
 If you want a good website to use use google ai studio [here](https://aistudio.google.com/prompts/new_chat)
 
 If it is too restiricted in the sidebar under advanced press saftey instructions change as needed
@@ -18,22 +19,22 @@ If it is too restiricted in the sidebar under advanced press saftey instructions
 To paste the system prompt press system prompt make sure you are either on the one you made before or the create new on the bar paste the prompt into the instructions name it your good
 
 
-# Things you may want to know
+## Things you may want to know
 Actions are performed with `*action*`
 
   If you are using a ai that uses markdown formating i recomend to type md at the end of the first line where you define the parameters so actions look like **this** Google ai studio by default shows in md format
 
-# How to add character to public repo
+## How to add character to public repo
 Go to [this](https://forms.gle/tC5hch9N7vpD11sz7) link
 
 Warning all request subject to moderation unless NSFW is selected
 
-# how to add personas to public repo
+## how to add personas to public repo
 Go to [this](https://forms.gle/HHbvbr5MKJkaPE4x6) link
 
 Warning all request subject to moderation unless NSFW is selected
 
 
-# Have any questions fell free to post in the [reddit](https://www.reddit.com/r/AIRPGITHUB/)
+## Have any questions fell free to post in the [reddit](https://www.reddit.com/r/AIRPGITHUB/)
 
 <!-- GitAds-Verify: 7WVASZPJ1N9EVZTOPAUUM8JDWRIN5VWJ -->
