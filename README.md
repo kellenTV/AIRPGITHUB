@@ -1,3 +1,7 @@
+## Ads support give us funds ( :
+[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=kellentv/airpgithub@github)](https://gitads.dev/v1/ad-track?source=kellentv/airpgithub@github)
+The ads allow for a potential way to chat in the future
+
 The litteral best way to chat without the stupidity of any of the ai chat bots use this on anything with the requirment of a system prompt that is custom change the system prompt toIdentity
 
 ## Sytem prompt to enter is in the txt file
