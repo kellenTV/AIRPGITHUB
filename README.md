@@ -3,6 +3,8 @@
 
 The ads give us funds to use for future updates to the project including making it so you can chat in website
 
+<kbd>Random button for **your** Satisfaction</kbd>
+
 # Documentation
 The litteral best way to chat without the stupidity of any of the ai chat bots use this on anything with the requirment of a system prompt that is custom change the system prompt toIdentity
 
